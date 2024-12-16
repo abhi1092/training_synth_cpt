@@ -81,21 +81,25 @@ def tokenize_and_save(tokenizer: AutoTokenizer):
     process_map = partial(process, tokenizer=tokenizer)
     # loading dataset
     dataset = load_dataset('json', data_files="/new_data/wenlong/knowledge_sdg/flow_0.1.jsonl", split='train')
-    dataset = create_sft_qa_dataset(dataset, tokenizer).train_test_split(0.05)
+    # dataset = create_sft_qa_dataset(dataset, tokenizer).train_test_split(0.05)
     filename = f'data/dataset/bins/flow_0.1'
     # core tokenization operation happening
-    tokenized_train = dataset['train'].map(process_map,
-                                           remove_columns=dataset['train'][0].keys(),
+    tokenized_train = dataset.map(process_map,
+                                           remove_columns=dataset[0].keys(),
                                            desc='Tokenizing training split',
                                            num_proc=16)
-    tokenized_test = dataset['test'].map(process_map,
-                                         remove_columns=dataset['train'][0].keys(),
-                                         desc='Tokenizing test split',
-                                         num_proc=16)
+    # tokenized_train = dataset['train'].map(process_map,
+    #                                        remove_columns=dataset['train'][0].keys(),
+    #                                        desc='Tokenizing training split',
+    #                                        num_proc=16)
+    # tokenized_test = dataset['test'].map(process_map,
+    #                                      remove_columns=dataset['train'][0].keys(),
+    #                                      desc='Tokenizing test split',
+    #                                      num_proc=16)
     print(f"Test size {dataset['test'].num_rows}")
     # concatenate all the ids in each dataset into one large file we can use for training
-    write_to_memmap(tokenized_train, f"{filename}_train.bin")
-    write_to_memmap(tokenized_test, f"{filename}_test.bin")
+    write_to_memmap(tokenized_train, f"{filename}.bin")
+    # write_to_memmap(tokenized_test, f"{filename}_test.bin")
 
 
 if __name__ == '__main__':

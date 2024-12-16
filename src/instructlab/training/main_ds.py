@@ -60,6 +60,7 @@ from instructlab.training.multipack_sampler import (
 )
 from instructlab.training.setup_accelerator import setup_accelerator
 from instructlab.training.token_dataset import setup_dataloader, setup_dataset, MockDataset, TokenDataset
+from instructlab.training.cptdata import CPTDataset
 from instructlab.training.tokenizer_utils import setup_tokenizer
 from instructlab.training.utils import (
     StreamablePopen,
@@ -552,7 +553,10 @@ def main(args):
     torch.distributed.barrier()
 
     flash_enabled = check_flash_attn_enabled(args.disable_flash_attn, args.use_dolomite)
-    if args.mock_data:
+    if args.mode == "QA_SFT":
+        dataset_class = CPTDataset
+        dataset_kwargs = {'block_size': 2048, 'rehersal_rate': 0.1, 'subsample_ratio': 1.0}
+    elif args.mode == 'MOCK':
         dataset_class = MockDataset
         dataset_kwargs = {'mock_len': args.mock_len, 'data_path': args.data_path}
     else:
@@ -899,6 +903,7 @@ if __name__ == "__main__":
         help="Save full model state using Accelerate after finishing an epoch.",
     )
     parser.add_argument("--log_level", type=str, default="INFO")
+    parser.add_argument("--mode", type=str, default="QA_SFT")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--mock_data", action="store_true")
     parser.add_argument("--mock_len", type=int, default=2600)
