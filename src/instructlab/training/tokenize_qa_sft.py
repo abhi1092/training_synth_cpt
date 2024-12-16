@@ -96,7 +96,7 @@ def tokenize_and_save(tokenizer: AutoTokenizer):
     #                                      remove_columns=dataset['train'][0].keys(),
     #                                      desc='Tokenizing test split',
     #                                      num_proc=16)
-    print(f"Test size {dataset['test'].num_rows}")
+    print(f"Test size {dataset.num_rows}")
     # concatenate all the ids in each dataset into one large file we can use for training
     write_to_memmap(tokenized_train, f"{filename}.bin")
     # write_to_memmap(tokenized_test, f"{filename}_test.bin")
