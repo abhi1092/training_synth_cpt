@@ -41,6 +41,7 @@ from instructlab.dolomite.hf_models import GPTDolomiteForCausalLM
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, get_scheduler
+from transformers import AutoConfig
 import torch
 import torch.distributed
 
@@ -539,10 +540,13 @@ def main(args):
     tokenizer = setup_tokenizer(args.model_name_or_path, SPECIAL_TOKENS, CHAT_TEMPLATE)
     # device = torch.device("cuda", args.local_rank)
 
-    with open(Path(args.model_name_or_path) / "config.json") as conf_json:
-        model_conf = json.load(conf_json)
-    args.model_type = model_conf["model_type"]
+    if os.path.isfile(args.model_name_or_path):
+        with open(Path(args.model_name_or_path) / "config.json") as conf_json:
+            model_conf = json.load(conf_json)
+    else:
+        model_conf = AutoConfig.from_pretrained(args.model_name_or_path)
 
+    args.model_type = model_conf.model_type
     #### distributed init #####
     torch.cuda.set_device(int(os.environ["LOCAL_RANK"]))
     args.local_rank = int(os.environ["LOCAL_RANK"])
