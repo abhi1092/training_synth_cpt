@@ -4,7 +4,7 @@ import numpy as np
 import torch
 
 def _get_bin(task_name: str, split: str):
-    assert task_name in ['quality', 'rehersal', 'instruct']
+    assert task_name in ['qa_sft', 'rehersal'] # 'quality',  'instruct',
     bin_data_dir = 'data/dataset/bins'
     implemented_quality_split = {
         'entigraph': f'{bin_data_dir}/quality_all-entigraphgpt-4-turbo.bin',
