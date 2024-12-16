@@ -107,8 +107,8 @@ def setup_dataloader(
     rank = int(os.environ["RANK"])
     world_size = int(os.environ["WORLD_SIZE"])
 
-    lengths = dataset.get_lengths()
     if sampler == "multipack":
+        lengths = dataset.get_lengths()
         sampler = MultipackDistributedBatchSampler(
             batch_max_length=packing_max_batch_len,
             lengths=lengths,
