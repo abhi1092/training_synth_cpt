@@ -567,8 +567,6 @@ def main(args):
         dataset_class = TokenDataset
         dataset_kwargs = {'data_path': args.data_path}
     dataset = dataset_class(**dataset_kwargs)
-    import IPython; IPython.embed()
-    exit()
 
     try:
         packing_max_batch_len, grad_accum = find_packing_max_batch_len_and_grad_accum(
