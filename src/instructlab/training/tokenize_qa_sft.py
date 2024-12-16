@@ -85,7 +85,7 @@ def tokenize_and_save(tokenizer: AutoTokenizer):
     process_map = partial(process, tokenizer=tokenizer)
     # loading dataset
     dataset = load_dataset('json', data_files="/new_data/wenlong/knowledge_sdg/flow_0.1.jsonl", split='train')
-    dataset = create_sft_qa_dataset(dataset, tokenizer).select(range(100))#.train_test_split(0.05)
+    dataset = create_sft_qa_dataset(dataset, tokenizer)#.train_test_split(0.05)
     filename = f'data/dataset/bins/flow_0.1'
     # core tokenization operation happening
     tokenized_train = dataset.map(process_map,
@@ -102,7 +102,6 @@ def tokenize_and_save(tokenizer: AutoTokenizer):
     #                                      num_proc=16)
     print(f"Test size {dataset.num_rows}")
     # concatenate all the ids in each dataset into one large file we can use for training
-    import IPython; IPython.embed()
     write_to_memmap(tokenized_train, f"{filename}.bin")
     # write_to_memmap(tokenized_test, f"{filename}_test.bin")
 
