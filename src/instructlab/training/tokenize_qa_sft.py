@@ -51,7 +51,7 @@ from tqdm import tqdm
 def create_sft_qa_dataset(ds, tokenizer):
     qa_ds = []
     current_buffer = []
-    threshold = tokenizer.model_max_length
+    threshold = 4000
     ds = ds.map(lambda x: {'rephrase_as_qa_list': extract_qa_pairs(x['rephrase_as_qa'])})
     for e in tqdm(ds):
         for qa_list_element in e['rephrase_as_qa_list']:
