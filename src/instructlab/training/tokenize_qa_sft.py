@@ -29,7 +29,7 @@ def process(example: Dict, tokenizer: AutoTokenizer)->Dict:
     """
     Tokenize the text and return the tokenized text
     """
-    ids = tokenizer(example['text'])
+    ids = tokenizer(example['text'])['input_ids']
     return dict(ids=ids,len=len(ids))
 
 def write_to_memmap(dset: Dataset, filename: str):
@@ -50,16 +50,20 @@ from tqdm import tqdm
 
 def create_sft_qa_dataset(ds, tokenizer):
     qa_ds = []
-    current_buffer = []
-    threshold = 4000
+    # current_buffer = []
+    # threshold = 4000
     ds = ds.map(lambda x: {'rephrase_as_qa_list': extract_qa_pairs(x['rephrase_as_qa'])})
+    # for e in tqdm(ds):
+    #     for qa_list_element in e['rephrase_as_qa_list']:
+    #         current_buffer.append(f"### Question\n{qa_list_element[0]}\n###Answer\n{qa_list_element[1]}")
+    #         tokenized_seq = tokenizer.encode("\n\n".join(current_buffer))
+    #         if len(tokenized_seq) > threshold:
+    #             qa_ds.append({'text': "\n\n".join(current_buffer[:-1])})
+    #             current_buffer = [current_buffer[-1]]
+
     for e in tqdm(ds):
         for qa_list_element in e['rephrase_as_qa_list']:
-            current_buffer.append(f"### Question\n{qa_list_element[0]}\n###Answer\n{qa_list_element[1]}")
-            tokenized_seq = tokenizer.encode("\n\n".join(current_buffer))
-            if len(tokenized_seq) > threshold:
-                qa_ds.append({'text': "\n\n".join(current_buffer[:-1])})
-                current_buffer = [current_buffer[-1]]
+            qa_ds.append({'text': f"### Question\n{qa_list_element[0]}\n###Answer\n{qa_list_element[1]}"})
     qa_ds = Dataset.from_list(qa_ds)
     # qa_ds = qa_ds.map(lambda x: {'len': len(tokenizer.encode(x['text']))})
     return qa_ds
@@ -81,7 +85,7 @@ def tokenize_and_save(tokenizer: AutoTokenizer):
     process_map = partial(process, tokenizer=tokenizer)
     # loading dataset
     dataset = load_dataset('json', data_files="/new_data/wenlong/knowledge_sdg/flow_0.1.jsonl", split='train')
-    dataset = create_sft_qa_dataset(dataset, tokenizer)#.train_test_split(0.05)
+    dataset = create_sft_qa_dataset(dataset, tokenizer).select(range(100))#.train_test_split(0.05)
     filename = f'data/dataset/bins/flow_0.1'
     # core tokenization operation happening
     tokenized_train = dataset.map(process_map,
@@ -98,6 +102,7 @@ def tokenize_and_save(tokenizer: AutoTokenizer):
     #                                      num_proc=16)
     print(f"Test size {dataset.num_rows}")
     # concatenate all the ids in each dataset into one large file we can use for training
+    import IPython; IPython.embed()
     write_to_memmap(tokenized_train, f"{filename}.bin")
     # write_to_memmap(tokenized_test, f"{filename}_test.bin")
 
