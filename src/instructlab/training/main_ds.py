@@ -59,7 +59,7 @@ from instructlab.training.multipack_sampler import (
     find_packing_max_batch_len_and_grad_accum,
 )
 from instructlab.training.setup_accelerator import setup_accelerator
-from instructlab.training.token_dataset import setup_dataloader, setup_dataset
+from instructlab.training.token_dataset import setup_dataloader, setup_dataset, MockDataset, TokenDataset
 from instructlab.training.tokenizer_utils import setup_tokenizer
 from instructlab.training.utils import (
     StreamablePopen,
@@ -552,12 +552,13 @@ def main(args):
     torch.distributed.barrier()
 
     flash_enabled = check_flash_attn_enabled(args.disable_flash_attn, args.use_dolomite)
-
-    dataset = setup_dataset(
-        args.data_path,
-        mock=args.mock_data,
-        mock_len=args.mock_len,
-    )
+    if args.mock_data:
+        dataset_class = MockDataset
+        dataset_kwargs = {'mock_len': args.mock_len, 'data_path': args.data_path}
+    else:
+        dataset_class = TokenDataset
+        dataset_kwargs = {'data_path': args.data_path}
+    dataset = dataset_class(**dataset_kwargs)
 
     try:
         packing_max_batch_len, grad_accum = find_packing_max_batch_len_and_grad_accum(

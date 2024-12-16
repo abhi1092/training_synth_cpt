@@ -74,15 +74,15 @@ class MockDataset(Dataset):
 
 
 def setup_dataset(
-    data_path: str,
-    mock: bool = False,
-    mock_len: int = 2600,
+    dataset_class,
+    **kwargs,
+    # mock: bool = False,
+    # mock_len: int = 2600,
 ) -> Dataset:
-    if mock:
-        log_rank_0("Using a mock dataset.")
-        dataset = MockDataset(data_path, max_seq_len=mock_len)
-    else:
-        dataset = TokenDataset(data_path)
+    log_rank_0(f"Initializing dataset: {dataset_class.__name__}")
+    # dataset = MockDataset(data_path, max_seq_len=mock_len)
+    # dataset = TokenDataset(data_path)
+    dataset = dataset_class(**kwargs)
     return dataset
 
 
