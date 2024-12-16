@@ -568,26 +568,28 @@ def main(args):
         dataset_kwargs = {'data_path': args.data_path}
     dataset = dataset_class(**dataset_kwargs)
 
-    try:
-        packing_max_batch_len, grad_accum = find_packing_max_batch_len_and_grad_accum(
-            num_gpus=torch.distributed.get_world_size(),
-            avg_sample_len=dataset.get_lengths().mean(),
-            effective_batch_size=args.effective_batch_size,
-            max_batch_len_per_gpu=args.max_batch_len,
-            is_padding=not (args.use_dolomite or flash_enabled),
-            dataset=dataset,
-            seed=args.seed,
-        )
-        args.sampler = "multipack"
-    except RuntimeError as e:
-        if os.environ["LOCAL_RANK"] == "0":
-            print(f"\033[38;5;120m{e}\033[0m")
-
-        # fallback to grad accum = 1
-        # NOTE: packing max batch len will not be used
-        packing_max_batch_len = None
-        grad_accum = 1
-        args.sampler = "distributed"
+    # try:
+    #     packing_max_batch_len, grad_accum = find_packing_max_batch_len_and_grad_accum(
+    #         num_gpus=torch.distributed.get_world_size(),
+    #         avg_sample_len=dataset.get_lengths().mean(),
+    #         effective_batch_size=args.effective_batch_size,
+    #         max_batch_len_per_gpu=args.max_batch_len,
+    #         is_padding=not (args.use_dolomite or flash_enabled),
+    #         dataset=dataset,
+    #         seed=args.seed,
+    #     )
+    #     args.sampler = "multipack"
+    # except RuntimeError as e:
+    #     if os.environ["LOCAL_RANK"] == "0":
+    #         print(f"\033[38;5;120m{e}\033[0m")
+    #
+    #     # fallback to grad accum = 1
+    #     # NOTE: packing max batch len will not be used
+    #     packing_max_batch_len = None
+    #     grad_accum = 1
+    #     args.sampler = "distributed"
+    args.sampler = "distributed"
+    grad_accum = 1
 
     args.samples_per_gpu = (
         args.effective_batch_size // grad_accum // torch.distributed.get_world_size()
