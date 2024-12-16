@@ -48,7 +48,7 @@ def write_to_memmap(dset: Dataset, filename: str):
         arr.flush()
 from tqdm import tqdm
 
-def create_sft_qa_dataset(ds):
+def create_sft_qa_dataset(ds, tokenizer):
     qa_ds = []
     current_buffer = []
     threshold = tokenizer.model_max_length
