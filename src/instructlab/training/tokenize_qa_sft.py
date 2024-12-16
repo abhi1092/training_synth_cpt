@@ -101,6 +101,6 @@ def tokenize_and_save(tokenizer: AutoTokenizer):
 if __name__ == '__main__':
     # loading tokenizer
     tokenizer = AutoTokenizer.from_pretrained('ibm-granite/granite-3.0-8b-base', use_fast=True)
-    tokenizer.model_max_length=4016 # this is to hide the token_len>2048 wraning
+    tokenizer.model_max_length=4000 # this is to hide the token_len>2048 wraning
     # tokenizing the dataset
     tokenize_and_save(tokenizer)
