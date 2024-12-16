@@ -70,6 +70,9 @@ class CPTDataset(_MemmapDataset):
         else:
             return super().__getitem__(i)
 
+    def get_lengths(self):
+        return np.array([self.block_size]*super().__len__())
+
 def get_task_data_module(task_name: str,
                          block_size: int,
                          rehersal_rate: float,
