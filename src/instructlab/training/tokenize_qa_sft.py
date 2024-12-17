@@ -65,7 +65,7 @@ def create_sft_qa_dataset(ds, tokenizer):
         for qa_list_element in e['rephrase_as_qa_list']:
             qa_ds.append({'text': f"### Question\n{qa_list_element[0]}\n###Answer\n{qa_list_element[1]}"})
     qa_ds = Dataset.from_list(qa_ds)
-    # qa_ds = qa_ds.map(lambda x: {'len': len(tokenizer.encode(x['text']))})
+    qa_ds = qa_ds.map(lambda x: {'len': len(tokenizer.encode(x['text']))})
     return qa_ds
 
 def tokenize_and_save(tokenizer: AutoTokenizer):
@@ -88,6 +88,8 @@ def tokenize_and_save(tokenizer: AutoTokenizer):
     dataset = create_sft_qa_dataset(dataset, tokenizer)#.train_test_split(0.05)
     filename = f'data/dataset/bins/flow_0.1'
     # core tokenization operation happening
+    print(f"Dataset size: {sum(dataset['len'])} tokens")
+    print(f"Total 2k samples: {sum(dataset['len'])/2048} samples")
     tokenized_train = dataset.map(process_map,
                                            remove_columns=dataset[0].keys(),
                                            desc='Tokenizing training split',
@@ -100,7 +102,6 @@ def tokenize_and_save(tokenizer: AutoTokenizer):
     #                                      remove_columns=dataset['train'][0].keys(),
     #                                      desc='Tokenizing test split',
     #                                      num_proc=16)
-    print(f"Test size {dataset.num_rows}")
     # concatenate all the ids in each dataset into one large file we can use for training
     write_to_memmap(tokenized_train, f"{filename}.bin")
     # write_to_memmap(tokenized_test, f"{filename}_test.bin")
