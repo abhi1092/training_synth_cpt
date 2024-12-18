@@ -148,7 +148,7 @@ def setup_model(args, tokenizer, train_loader, grad_accum, flash_enabled):
     # store the base model args so we can recall them later if saving a LoRA model
     args.base_model_args = base_model_args
 
-    if len(tokenizer) > model.config.vocab_size:
+    if len(tokenizer) > model.config.vocab_size and args.resize_embeddings:
         print(
             f"WARNING: tokenizer has {len(tokenizer)} tokens but model has {model.config.vocab_size} vocab size"
         )
@@ -931,6 +931,7 @@ if __name__ == "__main__":
         help="Sharding strategy to be used for FSDP distributed training.",
     )
     parser.add_argument("--use_dolomite", action="store_true")
+    parser.add_argument("--resize_embeddings", action="store_true")
     parser.add_argument("--lora_r", type=int, default=0)  # set to > 0 to activate lora
     parser.add_argument("--lora_alpha", type=int, default=32)
     parser.add_argument("--lora_dropout", type=float, default=0.1)
