@@ -7,7 +7,7 @@ from transformers import AutoTokenizer
 import random
 import glob
 from tqdm import tqdm
-from utils.io_utils import jload
+from io_utils import jload
 
 def get_tokenizer(tokenizer_model_name: str)-> AutoTokenizer:
     # loading tokenizer
