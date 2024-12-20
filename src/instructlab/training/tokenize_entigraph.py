@@ -43,7 +43,7 @@ def _glob_all_json(dir_name: str) -> List[str]:
     return glob.glob(f'{dir_name}/*.json') + glob.glob(f'{dir_name}/.*.json')
 
 def _get_quality_graph(model_name: str) -> List[str]:
-    files = _glob_all_json(f'data/dataset/raw/quality_entigraph_{model_name}')
+    files = _glob_all_json(f'data/quality_entigraph_{model_name}')
     result = []
     for file in files:
         content = jload(file)

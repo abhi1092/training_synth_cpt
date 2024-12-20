@@ -557,9 +557,10 @@ def main(args):
     torch.distributed.barrier()
 
     flash_enabled = check_flash_attn_enabled(args.disable_flash_attn, args.use_dolomite)
-    if args.mode == "QA_SFT":
+    if args.mode == "task_ds":
         dataset_class = CPTDataset
-        dataset_kwargs = {'block_size': 2048, 'rehersal_rate': 0.1, 'subsample_ratio': 1.0}
+        dataset_kwargs = {'block_size': 2048, 'rehersal_rate': 0.1, 'subsample_ratio': 1.0,
+                          'task_name': args.task_name, 'split': args.split}
     elif args.mode == 'MOCK':
         dataset_class = MockDataset
         dataset_kwargs = {'mock_len': args.mock_len, 'data_path': args.data_path}
@@ -910,7 +911,9 @@ if __name__ == "__main__":
         help="Save full model state using Accelerate after finishing an epoch.",
     )
     parser.add_argument("--log_level", type=str, default="INFO")
-    parser.add_argument("--mode", type=str, default="QA_SFT")
+    parser.add_argument("--mode", type=str, default="task_ds")
+    parser.add_argument("--task_name", type=str, default="entigraph")
+    parser.add_argument("--split", type=str, default="quality")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--mock_data", action="store_true")
     parser.add_argument("--mock_len", type=int, default=2600)

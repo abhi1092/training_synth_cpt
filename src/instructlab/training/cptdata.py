@@ -52,12 +52,12 @@ class _MemmapDataset(Dataset):
 
 class CPTDataset(_MemmapDataset):
     def __init__ (self, block_size: int, rehersal_rate: float,
-                 subsample_ratio: float):
+                 subsample_ratio: float, task_name='entigraph', split='quality'):
         assert rehersal_rate <= 1.0
         self.rehersal_rate = rehersal_rate
         self.rehersal_data = _MemmapDataset(block_size, _get_bin('rehersal', 'rpj-train'), 1.0)
         super().__init__(block_size,
-                            _get_bin('qa_sft', 'qa_sft'),
+                            _get_bin(task_name, split),
                             subsample_ratio)
 
     def __len__(self):
