@@ -590,7 +590,7 @@ def main(args):
     #     grad_accum = 1
     #     args.sampler = "distributed"
     args.sampler = "distributed"
-    grad_accum = 2
+    grad_accum = 1
     packing_max_batch_len = None
 
     args.samples_per_gpu = (
