@@ -90,7 +90,7 @@ def setup_optimizer(args, model):
             model.parameters(),
             lr=args.learning_rate,
             betas=(0.9, 0.95),
-            weight_decay=0.0,
+            weight_decay=args.wd,
         )
     elif args.distributed_training_framework == DistributedBackend.DEEPSPEED.value:
         # need to use this only when the CPU offload optimizer is enabled
@@ -884,6 +884,7 @@ if __name__ == "__main__":
             "constant_with_warmup",
         ],
     )
+    parser.add_argument("--wd", type=float, default=0.0)
     parser.add_argument("--num_warmup_steps", type=int, default=1000)
     # parser.add_argument("--gradient_accumulation_steps", type=int, default=1)
     parser.add_argument(
