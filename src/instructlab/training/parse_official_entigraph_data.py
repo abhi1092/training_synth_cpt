@@ -1,11 +1,12 @@
 from datasets import load_dataset
 from io_utils import *
 import os
+from tqdm import tqdm
 
 ds = load_dataset("zitongyang/entigraph-quality-corpus")
 
 os.makedirs("data/quality_entigraph_gpt-4-turbo", exist_ok=True)
-for example in ds['train']:
+for example in tqdm(ds['train']):
     output = []
     output_path = f'data/quality_entigraph_gpt-4-turbo/{example["uid"]}.json'
     
