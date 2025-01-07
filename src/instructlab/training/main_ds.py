@@ -590,7 +590,7 @@ def main(args):
     #     grad_accum = 1
     #     args.sampler = "distributed"
     args.sampler = "distributed"
-    grad_accum = 1
+    grad_accum = args.grad_accum
     packing_max_batch_len = None
 
     args.samples_per_gpu = (
@@ -869,7 +869,8 @@ if __name__ == "__main__":
     )
     # parser.add_argument("--samples_per_gpu", type=int, default=8)
     parser.add_argument("--effective_batch_size", type=int, default=3840)
-    parser.add_argument("--learning_rate", type=float, default=1e-4)
+    parser.add_argument("--learning_rate", type=float, default=1e-4) # 
+    parser.add_argument("--grad_accum", type=int, default=1)
     parser.add_argument(
         "--lr_scheduler",
         type=str,
