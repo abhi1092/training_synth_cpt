@@ -8,6 +8,9 @@ def _get_bin(task_name: str, split: str):
     bin_data_dir = 'data/dataset/bins'
     implemented_quality_split = {
         'entigraph': f'{bin_data_dir}/quality_all-entigraphgpt-4-turbo.bin',
+        'entigraph_pruned_v1': f'{bin_data_dir}/quality_all-entigraphgpt-4-turbo-pruned-v1.bin',
+        'entigraph_pruned_v1.1': f'{bin_data_dir}/quality_all-entigraphgpt-4-turbo-pruned-v1.1.bin',
+        'official_qa_sft': f'{bin_data_dir}/quality_qasftgpt-4-turbo.bin',
     }
     implemented_rehersal_split = {
         'rpj-train': f'{bin_data_dir}/togethercomputer_RedPajama_Data_1T_Sample_train.bin',
